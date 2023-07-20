@@ -4,7 +4,7 @@ import prismadb from '@/lib/prismadb';
 
 export async function POST(
   req: Request,
-  { params }: { params: { storedId: string } }
+  { params }: { params: { storeId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -24,13 +24,13 @@ export async function POST(
       return new NextResponse('Image URL is required', { status: 400 });
     }
 
-    if (!params.storedId) {
+    if (!params.storeId) {
       return new NextResponse('Store id is required', { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
       where: {
-        id: params.storedId,
+        id: params.storeId,
         userId,
       },
     });
@@ -43,13 +43,33 @@ export async function POST(
       data: {
         label,
         imageUrl,
-        storeId: params.storedId,
+        storeId: params.storeId,
       },
     });
 
     return NextResponse.json(billboard);
   } catch (error) {
     console.log(`[BILLBOARDS_POST]${error}`);
+    return new NextResponse('Internal error', { status: 500 });
+  }
+}
+
+export async function GET(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
+  try {
+    if (!params.storeId) {
+      return new NextResponse('Store id is required', { status: 400 });
+    }
+
+    const billboards = await prismadb.billboard.findMany({
+      where: { storeId: params.storeId },
+    });
+
+    return NextResponse.json(billboards);
+  } catch (error) {
+    console.log(`[BILLBOARDS_GET]${error}`);
     return new NextResponse('Internal error', { status: 500 });
   }
 }

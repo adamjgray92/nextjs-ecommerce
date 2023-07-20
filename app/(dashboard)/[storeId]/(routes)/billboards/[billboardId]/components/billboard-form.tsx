@@ -23,8 +23,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import AlertModal from '@/components/modals/alert-modal';
-import ApiAlert from '@/components/ui/api-alert';
-import useOrigin from '@/hooks/use-origin';
 import ImageUpload from '@/components/ui/image-upload';
 
 interface BillboardFormProps {
@@ -43,8 +41,6 @@ export default function BillboardForm({ initialData }: BillboardFormProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const origin = useOrigin();
 
   const title = initialData ? 'Edit billboard' : 'Create billboard';
   const description = initialData
@@ -72,6 +68,7 @@ export default function BillboardForm({ initialData }: BillboardFormProps) {
         await axios.post(`/api/${params.storeId}/billboards`, data);
       }
       router.refresh();
+      router.push(`/${params.storeId}/billboards`);
       toast.success(toastMessage);
     } catch (error) {
       toast.error('Something went wrong');
