@@ -64,6 +64,8 @@ export async function DELETE(
   try {
     const { userId } = auth();
 
+    console.log(userId);
+
     if (!userId) {
       return new NextResponse('Unauthenticated', { status: 401 });
     }
@@ -83,7 +85,7 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 403 });
     }
 
-    const billboard = await prismadb.store.deleteMany({
+    const billboard = await prismadb.billboard.deleteMany({
       where: {
         id: params.billboardId,
       },
